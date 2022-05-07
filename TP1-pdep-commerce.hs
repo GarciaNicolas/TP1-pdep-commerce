@@ -2,7 +2,7 @@
 --take    ::   Int -> [a] -> [a]  
 --drop    ::   Int -> [a] -> [a]
 --head    ::   [a] -> a
---elem    ::    a -> [a] -> Bool
+--elem    ::   Eq a => a -> [a] -> Bool
 --reverse ::   [a] -> [a]
 
 type Producto = (String, Float)
@@ -23,10 +23,11 @@ aplicarCostoDeEnvio unPrecio costoEnvio              = costoEnvio + unPrecio
 precioTotal :: Producto -> Float -> Float -> Float -> Float
 precioTotal unProducto cantidad descuento costoEnvio = (aplicarDescuento (precio unProducto) descuento * cantidad) `aplicarCostoDeEnvio` costoEnvio 
 
-
+nombreDeLujo :: String -> Bool
+nombreDeLujo unNombre = elem 'x' unNombre || elem 'z' unNombre
 
 productoDeLujo :: Producto -> Bool
-productoDeLujo unProducto               = elem 'x' (nombre unProducto) || elem 'z' (nombre unProducto)
+productoDeLujo unProducto               = nombreDeLujo.nombre $ unProducto
 
 vocales :: String
 vocales = "aeiouAEIOU"
@@ -43,15 +44,23 @@ productoDeElite unProducto =  productoDeLujo unProducto && productoCodiciado unP
 entregaSencilla :: String -> Bool
 entregaSencilla dia = even.length $ dia
 
+modificarNombre :: (String -> String) -> Producto ->  String
+modificarNombre unaFuncion (unNombre, _) = unaFuncion unNombre
+
+descodiciar :: String -> String
+descodiciar unNombre = reverse.(drop  10).reverse $ unNombre
+
+abaratar :: String -> String
+abaratar unNombre = reverse.descodiciar $ unNombre
 
 descodiciarProducto :: Producto -> Producto
-descodiciarProducto unProducto = (  reverse.(drop  10).reverse.nombre $ unProducto   ,   precio unProducto  )
+descodiciarProducto unProducto = (  modificarNombre descodiciar unProducto  ,   precio unProducto  )
 
 productoXL :: Producto -> Producto
-productoXL unProducto = ( nombre unProducto ++ "XL" , precio unProducto )
+productoXL unProducto = ( modificarNombre (++"XL") unProducto , precio unProducto )
 
 versionBarata :: Producto -> Producto
-versionBarata unProducto = (    reverse.nombre.descodiciarProducto $ unProducto    ,    precio unProducto   )
+versionBarata unProducto = (    modificarNombre abaratar unProducto    ,    precio unProducto   )
 
 
  
