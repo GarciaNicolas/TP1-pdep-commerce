@@ -44,8 +44,8 @@ productoDeElite unProducto =  productoDeLujo unProducto && productoCodiciado unP
 entregaSencilla :: String -> Bool
 entregaSencilla dia = even.length $ dia
 
-modificarNombre :: (String -> String) -> Producto ->  String
-modificarNombre unaFuncion (unNombre, _) = unaFuncion unNombre
+modificarNombre :: (String -> String) -> Producto ->  Producto
+modificarNombre unaFuncion (unNombre, unPrecio) = (unaFuncion unNombre, unPrecio)
 
 descodiciar :: String -> String
 descodiciar unNombre = reverse.(drop  10).reverse $ unNombre
@@ -54,13 +54,12 @@ abaratar :: String -> String
 abaratar unNombre = reverse.descodiciar $ unNombre
 
 descodiciarProducto :: Producto -> Producto
-descodiciarProducto unProducto = (  modificarNombre descodiciar unProducto  ,   precio unProducto  )
+descodiciarProducto unProducto = modificarNombre descodiciar unProducto
 
 productoXL :: Producto -> Producto
-productoXL unProducto = ( modificarNombre (++"XL") unProducto , precio unProducto )
+productoXL unProducto =  modificarNombre (++"XL") unProducto 
 
 versionBarata :: Producto -> Producto
-versionBarata unProducto = (    modificarNombre abaratar unProducto    ,    precio unProducto   )
-
+versionBarata unProducto =  modificarNombre abaratar unProducto 
 
  
